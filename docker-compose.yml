@@ -1,0 +1,53 @@
+version: "3"
+services:
+    web:
+        build: ./LeagueOfBets
+        image: "localhost:5000/leagueofbets_web"
+        ports:
+            - "10080:80"
+            - "10443:443"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+            - ASPNETCORE_HTTPS_PORT=10443
+            - ASPNETCORE_URLS=https://+443;http://+80
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=dev
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/Core.ssl.pfx
+        networks:
+            - leagueofbets
+            - users-1
+        volumes:
+            - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
+        depends_on:
+            - users
+    users:
+        build: ./UsersAPI
+        image: "localhost:5000/leagueofbets_usr"
+        ports:
+            - "28080:80"        
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+        networks:
+            - users-1
+            - users-internal
+        depends_on:
+            - users_sql
+    users_sql:
+        image: "mcr.microsoft.com/mssql/server:2017-latest"
+        ports:
+            - "21433:1433"
+        environment:
+            - SA_PASSWORD=DeVeL0PeR
+            - ACCEPT_EULA="Y"
+        networks:
+            - users-internal
+        volumes:
+            - users-sqlvolume:/var/opt/mssql
+            
+networks:
+    leagueofbets:
+        external: true
+    users-1:
+    users-internal:
+    
+volumes:
+    users-sqlvolume:
