@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using IdentityServer4;
 using IdentityServer4.Models;
+using IdentityServer4.Test;
 
 namespace UsersAPI
 {
@@ -7,34 +9,45 @@ namespace UsersAPI
     {
         public static IEnumerable<IdentityResource> IdentityResources => new IdentityResource[]
         {
-            new IdentityResources.OpenId()
+            new IdentityResources.OpenId(),
+            new IdentityResources.Profile()
         };
 
         public static IEnumerable<ApiResource> Apis => new List<ApiResource>
         {
-            new ApiResource("api1", "My API")
+            new ApiResource("matches", "MatchesAPI")
         };
 
         public static IEnumerable<Client> Clients => new List<Client>
         {
             new Client
             {
-                ClientId = "client",
+                ClientId = "leagueofbets_web",
+                ClientName = "LeagueOfBets Web",
+                AllowedGrantTypes = GrantTypes.Implicit,
 
-                // no interactive user, use the clientid/secret for authentication
-                AllowedGrantTypes = GrantTypes.ClientCredentials,
-
-                // secret for authentication
+                RedirectUris = { "http://leaugeofbets_web/signin-oidc"},
+                PostLogoutRedirectUris = { "http://leagueofbets_web/signout-callback-oidc"},
                 ClientSecrets =
                 {
-                    new Secret("secret".Sha256())
+                    new Secret("developer".Sha256())
                 },
+                AllowedScopes = new List<string>
+                {
+                    IdentityServerConstants.StandardScopes.OpenId,
+                    IdentityServerConstants.StandardScopes.Profile
+                }
+            }
+        };
 
-                // scopes that client has access to
-                AllowedScopes = {"api1"}
+        public static List<TestUser> TestUsers => new List<TestUser>
+        {
+            new TestUser
+            {
+                SubjectId = "42",
+                Username = "v0ldek",
+                Password = "developer"
             }
         };
     }
-}
-
 }

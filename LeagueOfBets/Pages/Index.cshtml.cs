@@ -25,7 +25,7 @@ namespace LeagueOfBets.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var client = _clientFactory.CreateClient("Users");
+            /*var client = _clientFactory.CreateClient("Users");
             var response = await client.GetAsync("/api/values");
 
             if (response.IsSuccessStatusCode)
@@ -45,7 +45,7 @@ namespace LeagueOfBets.Pages
             var registerResponse = await client.PostAsync(
                 "/register", new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
 
-            RegisterStatusCode = (int) registerResponse.StatusCode;
+            RegisterStatusCode = (int) registerResponse.StatusCode;*/
 
             return Page();
         }

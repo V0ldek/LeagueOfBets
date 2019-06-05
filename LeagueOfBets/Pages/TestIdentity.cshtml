@@ -1,0 +1,15 @@
+﻿@page
+@model LeagueOfBets.Pages.TestIdentityModel
+@{
+    ViewData["Title"] = "TestIdentity";
+}
+
+<h1>TestIdentity</h1>
+
+<dl>
+    @foreach (var claim in User.Claims)
+    {
+    <dt>@claim.Type</dt>
+    <dd>@claim.Value</dd>
+    }
+</dl>

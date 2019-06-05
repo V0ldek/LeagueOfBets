@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28803.452
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LeagueOfBets", "LeagueOfBets\LeagueOfBets.csproj", "{02202E26-FF71-4511-865A-0F47E424C419}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LeagueOfBets", "LeagueOfBets\LeagueOfBets.csproj", "{02202E26-FF71-4511-865A-0F47E424C419}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UsersAPI", "UsersAPI\UsersAPI.csproj", "{0F99165E-AEE1-497E-89DB-9F2E9F2DC4BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UsersAPI", "UsersAPI\UsersAPI.csproj", "{0F99165E-AEE1-497E-89DB-9F2E9F2DC4BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MatchesAPI", "MatchesAPI\MatchesAPI.csproj", "{D23B4E30-3303-454A-95FE-781477FA935F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{0F99165E-AEE1-497E-89DB-9F2E9F2DC4BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F99165E-AEE1-497E-89DB-9F2E9F2DC4BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F99165E-AEE1-497E-89DB-9F2E9F2DC4BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D23B4E30-3303-454A-95FE-781477FA935F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D23B4E30-3303-454A-95FE-781477FA935F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D23B4E30-3303-454A-95FE-781477FA935F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D23B4E30-3303-454A-95FE-781477FA935F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
