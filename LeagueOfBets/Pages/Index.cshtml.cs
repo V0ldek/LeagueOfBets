@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
@@ -25,8 +27,13 @@ namespace LeagueOfBets.Pages
 
         public async Task<IActionResult> OnGetAsync()
         {
-            /*var client = _clientFactory.CreateClient("Users");
-            var response = await client.GetAsync("/api/values");
+            var client = _clientFactory.CreateClient("Matches");
+            var token = await HttpContext.GetTokenAsync("access_token");
+
+            _logger.LogInformation(token);
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var response = await client.GetAsync("/values");
 
             if (response.IsSuccessStatusCode)
             {
@@ -36,16 +43,6 @@ namespace LeagueOfBets.Pages
             {
                 _logger.LogWarning(response.ToString());
             }
-
-            var payload = new
-            {
-                email = "Twoja_stara",
-                password = "passwordTwojejStarej"
-            };
-            var registerResponse = await client.PostAsync(
-                "/register", new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json"));
-
-            RegisterStatusCode = (int) registerResponse.StatusCode;*/
 
             return Page();
         }

@@ -22,6 +22,7 @@ namespace MatchesAPI
                 {
                     options.Authority = "http://localhost:20080";
                     options.RequireHttpsMetadata = false;
+                    options.MetadataAddress = "http://leagueofbets_identity/.well-known/openid-configuration";
 
                     options.Audience = "matches";
                 });
@@ -40,7 +41,7 @@ namespace MatchesAPI
                 app.UseHsts();
             }
 
-            app.UseHttpsRedirection();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }

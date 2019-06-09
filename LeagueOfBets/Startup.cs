@@ -1,11 +1,14 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Logging;
 
 namespace LeagueOfBets
 {
@@ -20,6 +23,8 @@ namespace LeagueOfBets
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
+
             services.Configure<CookiePolicyOptions>(
                 options =>
                 {
@@ -51,16 +56,21 @@ namespace LeagueOfBets
                     {
                         options.Authority = "http://localhost:20080";
                         options.RequireHttpsMetadata = false;
+                        options.MetadataAddress = "http://leagueofbets_identity/.well-known/openid-configuration";
                         options.ClientId = "leagueofbets_web";
+                        options.ClientSecret = "developer";
+                        options.ResponseType = "code id_token";
                         options.SaveTokens = true;
+                        options.GetClaimsFromUserInfoEndpoint = true;
+
+                        options.Scope.Add("matches");
+                        options.Scope.Add("offline_access");
+                        options.ClaimActions.MapJsonKey("website", "website");
                     });
         }
 
         private void ConfigureHttpClients(IServiceCollection services)
         {
-            services.AddHttpClient(
-                "Users",
-                configuration => { configuration.BaseAddress = new Uri("http://leagueofbets_users"); });
             services.AddHttpClient(
                 "Matches",
                 configuration => { configuration.BaseAddress = new Uri("http://leagueofbets_matches"); });

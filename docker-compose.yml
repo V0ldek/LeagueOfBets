@@ -11,18 +11,19 @@ services:
             - ASPNETCORE_HTTPS_PORT=10443
             - ASPNETCORE_URLS=https://+443;http://+80
             - ASPNETCORE_Kestrel__Certificates__Default__Password=dev
-            - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/Core.ssl.pfx
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/Core.ssl.pfx    
         networks:
-            - users-1
-            - matches-1
+            - global
+            #- identity-1
+            #- matches-1
         volumes:
             - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
         depends_on:
-            - users
+            - identity
             - matches
-    users:
-        build: ./UsersAPI
-        image: "localhost:5000/leagueofbets_users"
+    identity:
+        build: ./Identity
+        image: "localhost:5000/leagueofbets_identity"
         ports:
             - "20080:80"
             - "20443:443"
@@ -33,13 +34,14 @@ services:
             - ASPNETCORE_Kestrel__Certificates__Default__Password=dev
             - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/Core.ssl.pfx
         networks:
-            - users-1
-            - users-internal
+            - global
+            #- identity-1
+            #- identity-internal
         volumes:
             - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
         depends_on:
-            - users_sql
-    users_sql:
+            - identity_sql
+    identity_sql:
         image: "mcr.microsoft.com/mssql/server:2017-latest"
         ports:
             - "21433:1433"
@@ -47,9 +49,10 @@ services:
             - SA_PASSWORD=DeVeL0PeR
             - ACCEPT_EULA="Y"
         networks:
-            - users-internal
+            - global
+            #- identity-internal
         volumes:
-            - users-sqlvolume:/var/opt/mssql
+            - identity-sqlvolume:/var/opt/mssql
     matches:
         build: ./MatchesAPI
         image: "localhost:5000/leagueofbets_matches"
@@ -58,10 +61,15 @@ services:
         environment:
             - ASPNETCORE_ENVIRONMENT=Development
         networks:
-            - matches-1
+            - global
+            #- identity-1
+            #- matches-1
+            #- matches-internal
 networks:
-    users-1:
-    users-internal:
-    matches-1:
+    global:
+    #identity-1:
+    #matches-1:
+    #identity-internal:
+    #matches-internal:
 volumes:
-    users-sqlvolume:
+    identity-sqlvolume:
