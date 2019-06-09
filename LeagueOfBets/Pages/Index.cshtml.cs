@@ -33,7 +33,7 @@ namespace LeagueOfBets.Pages
             _logger.LogInformation(token);
 
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            var response = await client.GetAsync("/values");
+            var response = await client.GetAsync("/teams/");
 
             if (response.IsSuccessStatusCode)
             {

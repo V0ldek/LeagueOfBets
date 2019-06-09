@@ -1,4 +1,4 @@
-version: "3"
+version: "3.4"
 services:
     web:
         build: ./LeagueOfBets
@@ -20,7 +20,7 @@ services:
             - ${APPDATA}\ASP.NET\Https:/root/.aspnet/https:ro
         depends_on:
             - identity
-            - matches
+            - matches_api
     identity:
         build: ./Identity
         image: "localhost:5000/leagueofbets_identity"
@@ -53,9 +53,11 @@ services:
             #- identity-internal
         volumes:
             - identity-sqlvolume:/var/opt/mssql
-    matches:
-        build: ./MatchesAPI
-        image: "localhost:5000/leagueofbets_matches"
+    matches_api:
+        build: 
+            context: ./Matches/
+            target: final-api
+        image: "localhost:5000/leagueofbets_matches_api"
         ports:
             - "38080:80"
         environment:
@@ -65,6 +67,30 @@ services:
             #- identity-1
             #- matches-1
             #- matches-internal
+        depends_on:
+            - matches_sql
+    matches_worker:
+        build:
+            context: ./Matches/
+            target: final-worker
+        image: "localhost:5000/leagueofbets_matches_worker"
+        networks:
+            - global
+            #- matches-internal
+        depends_on:
+            - matches_sql
+    matches_sql:
+        image: "mcr.microsoft.com/mssql/server:2017-latest"
+        ports:
+            - "31433:1433"
+        environment:
+            - SA_PASSWORD=DeVeL0PeR
+            - ACCEPT_EULA="Y"
+        networks:
+            - global
+            #- matches-internal
+        volumes:
+            - matches-sqlvolume:/var/opt/mssql
 networks:
     global:
     #identity-1:
@@ -73,3 +99,4 @@ networks:
     #matches-internal:
 volumes:
     identity-sqlvolume:
+    matches-sqlvolume:
