@@ -23,6 +23,7 @@ namespace MatchesAPI.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<Match>), StatusCodes.Status200OK)]
         public async Task<ActionResult<IEnumerable<Match>>> GetAsync() =>
             await _matchesDbContext.Matches.Include(m => m.Participations).ToListAsync();
 

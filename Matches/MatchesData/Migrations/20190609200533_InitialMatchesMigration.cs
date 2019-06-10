@@ -8,8 +8,8 @@ namespace MatchesData.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Match",
-                columns: table => new
+                "Match",
+                table => new
                 {
                     Id = table.Column<int>(nullable: false),
                     StartDateTime = table.Column<DateTime>(nullable: false),
@@ -18,27 +18,21 @@ namespace MatchesData.Migrations
                     RedScore = table.Column<int>(nullable: false, defaultValue: 0),
                     IsFinished = table.Column<bool>(nullable: false, defaultValue: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Match", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Match", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Team",
-                columns: table => new
+                "Team",
+                table => new
                 {
                     Id = table.Column<int>(nullable: false),
                     Name = table.Column<string>(maxLength: 256, nullable: false),
                     LogoUrl = table.Column<string>(maxLength: 256, nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Team", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Team", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "MatchParticipation",
-                columns: table => new
+                "MatchParticipation",
+                table => new
                 {
                     MatchId = table.Column<int>(nullable: false),
                     Side = table.Column<string>(nullable: false),
@@ -46,49 +40,49 @@ namespace MatchesData.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_MatchParticipation", x => new { x.MatchId, x.Side });
+                    table.PrimaryKey("PK_MatchParticipation", x => new {x.MatchId, x.Side});
                     table.ForeignKey(
-                        name: "FK_MatchParticipation_Match_MatchId",
-                        column: x => x.MatchId,
-                        principalTable: "Match",
-                        principalColumn: "Id",
+                        "FK_MatchParticipation_Match_MatchId",
+                        x => x.MatchId,
+                        "Match",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_MatchParticipation_Team_TeamId",
-                        column: x => x.TeamId,
-                        principalTable: "Team",
-                        principalColumn: "Id",
+                        "FK_MatchParticipation_Team_TeamId",
+                        x => x.TeamId,
+                        "Team",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_MatchParticipation_TeamId",
-                table: "MatchParticipation",
-                column: "TeamId");
+                "IX_MatchParticipation_TeamId",
+                "MatchParticipation",
+                "TeamId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_MatchParticipation_MatchId_TeamId",
-                table: "MatchParticipation",
-                columns: new[] { "MatchId", "TeamId" },
+                "IX_MatchParticipation_MatchId_TeamId",
+                "MatchParticipation",
+                new[] {"MatchId", "TeamId"},
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Team_Name",
-                table: "Team",
-                column: "Name",
+                "IX_Team_Name",
+                "Team",
+                "Name",
                 unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "MatchParticipation");
+                "MatchParticipation");
 
             migrationBuilder.DropTable(
-                name: "Match");
+                "Match");
 
             migrationBuilder.DropTable(
-                name: "Team");
+                "Team");
         }
     }
 }

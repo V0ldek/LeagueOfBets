@@ -5,6 +5,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Identity.Quickstart.Consent;
+using IdentityServer4;
 using IdentityServer4.Events;
 using IdentityServer4.Extensions;
 using IdentityServer4.Models;
@@ -14,7 +16,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace IdentityServer4.Quickstart.UI.Device
+namespace Identity.Quickstart.Device
 {
     [Authorize]
     [SecurityHeaders]

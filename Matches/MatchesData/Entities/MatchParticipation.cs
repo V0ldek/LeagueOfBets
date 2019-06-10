@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MatchesData.Entities.Enums;
+﻿using MatchesData.Entities.Enums;
 
 namespace MatchesData.Entities
 {

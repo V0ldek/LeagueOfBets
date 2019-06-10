@@ -1,6 +1,4 @@
-﻿using System;
-using MatchesData.Entities;
-using MatchesData.Entities.Enums;
+﻿using MatchesData.Entities;
 using MatchesData.EnumPropertyBuilderExtensions;
 using Microsoft.EntityFrameworkCore;
 

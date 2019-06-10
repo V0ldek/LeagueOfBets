@@ -91,6 +91,34 @@ services:
             #- matches-internal
         volumes:
             - matches-sqlvolume:/var/opt/mssql
+    bets_api:
+        build:
+            context: ./Bets/
+            target: final-api
+        image: "localhost:5000/leagueofbets_matches_api"
+        ports:
+            - "48080:80"
+        environment:
+            - ASPNETCORE_ENVIRONMENT=Development
+        networks:
+            - global
+            #- identity-1
+            #- bets-1
+            #- bets-internal
+        depends_on:
+            - bets_sql
+    bets_sql:
+        image: "mcr.microsoft.com/mssql/server:2017-latest"
+        ports:
+            - "41433:1433"
+        environment:
+            - SA_PASSWORD=DeVeL0PeR
+            - ACCEPT_EULA="Y"
+        networks:
+            - global
+            #- bets-internal
+        volumes:
+            - bets-sqlvolume:/var/opt/mssql
 networks:
     global:
     #identity-1:
@@ -100,3 +128,4 @@ networks:
 volumes:
     identity-sqlvolume:
     matches-sqlvolume:
+    bets-sqlvolume:

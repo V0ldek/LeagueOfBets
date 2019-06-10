@@ -13,7 +13,7 @@ using Newtonsoft.Json;
 
 namespace MatchesWorker
 {
-    public class Program : IDisposable
+    public sealed class Program : IDisposable
     {
         private readonly IApiClient _apiClient;
         private readonly CancellationTokenSource _cancellationTokenSource;
@@ -92,7 +92,7 @@ namespace MatchesWorker
 
             _logger.LogInformation($"Fetching new matches between {fetchSince:yyyy-MM-dd} and {fetchTo:yyyy-MM-dd}");
 
-            var matches = await _apiClient.FetchMatchesBetweenAsync(fetchSince, fetchTo);
+            var matches = (await _apiClient.FetchMatchesBetweenAsync(fetchSince, fetchTo)).ToList();
 
             foreach (var match in matches)
             {
@@ -118,7 +118,7 @@ namespace MatchesWorker
 
             _logger.LogInformation($"Fetching updates between {updateSince:yyyy-MM-dd} and {updateTo:yyyy-MM-dd}");
 
-            var matches = await _apiClient.FetchMatchesBetweenAsync(updateSince, updateTo);
+            var matches = (await _apiClient.FetchMatchesBetweenAsync(updateSince, updateTo)).ToList();
 
             foreach (var match in matches)
             {
