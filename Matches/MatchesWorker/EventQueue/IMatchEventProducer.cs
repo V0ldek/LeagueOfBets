@@ -9,7 +9,6 @@ namespace MatchesWorker.EventQueue
     {
         void PublishNewMatch(Match match);
 
-        void PublishMatchUpdate(Match match);
-
+        void PublishMatchUpdate(Match updatedMatch, Match oldMatch);
     }
 }

@@ -1,10 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using BetsData;
-using BetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -23,10 +20,11 @@ namespace BetsAPI.Controllers
         }
         
         [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<Stake>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAsync()
         {
-            var stakes = await _betsDbContext.Stakes.ToListAsync();
+            var stakes = await _betsDbContext.Stakes
+                .Where(s => s.IsBettable)
+                .ToListAsync();
             return Ok(stakes.Select(s => new
             {
                 s.Id,

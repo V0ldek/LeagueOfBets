@@ -33,55 +33,63 @@
         </thead>
         @if (Model.Matches != null)
         {
-            @foreach (var match in Model.Matches.OrderByDescending(m => m.StartDateTime))
-             {
-                 <tr>
-                     <td>
-                         <p>@match.StartDateTime</p>
-                     </td>
-                     <td>
-                         <div class="match-grid">
-                             <img class="img-fluid match-logo-blue" src="@match.BlueTeamLogoUrl" />
-                             <h3 class="match-header">@match.BlueTeamName VS @match.RedTeamName</h3>
-                             <img class="img-fluid match-logo-red" src="@match.RedTeamLogoUrl" />
-                         </div>
-                     </td>
-                     <td>
-                         <p>@match.BlueScore - @match.RedScore</p>
-                     </td>
-                     <td>
-                         <p>Best of @match.BestOf</p>
-                     </td>
-                     <td>
-                         @if (!match.IsFinished)
-                         {
-                             if (Model.StakesByMatchId != null)
+            foreach (var match in Model.Matches.OrderByDescending(m => m.StartDateTime))
+            {
+                <tr>
+                    <td>
+                        <p>@match.StartDateTime</p>
+                    </td>
+                    <td>
+                        <div class="match-grid">
+                            <img class="img-fluid match-logo-blue" src="@match.BlueTeamLogoUrl"/>
+                            <h3 class="match-header">@match.BlueTeamName VS @match.RedTeamName</h3>
+                            <img class="img-fluid match-logo-red" src="@match.RedTeamLogoUrl"/>
+                        </div>
+                    </td>
+                    <td>
+                        <p>@match.BlueScore - @match.RedScore</p>
+                    </td>
+                    <td>
+                        <p>Best of @match.BestOf</p>
+                    </td>
+                    <td>
+                        @if (Model.Account?.Balance >= 100)
+                        {
+                            if (!match.IsFinished)
                              {
-                                 foreach (var stake in Model.StakesByMatchId[match.Id])
+                                 if (Model.StakesByMatchId != null && Model.StakesByMatchId.ContainsKey(match.Id))
                                  {
-                                     <form method="post">
-                                         <div class="form-group">
-                                             <input hidden asp-for="SelectedStakeId" value="@stake.Id"/>
-                                             <button type="submit" class="btn btn-primary form-inline">
-                                                 @match.BlueTeamName @stake.BlueScore - @stake.RedScore @match.RedTeamName <br/> 
-                                                 Bet 100, Win @((100 * stake.Ratio).ToString("0.00"))
-                                             </button>
-                                         </div>
-                                     </form>
+                                     foreach (var stake in Model.StakesByMatchId[match.Id])
+                                     {
+                                         <form method="post">
+                                             <div class="form-group">
+                                                 <input hidden asp-for="SelectedStakeId" value="@stake.Id"/>
+                                                 <button type="submit" class="btn btn-primary form-inline">
+                                                     @match.BlueTeamName @stake.BlueScore - @stake.RedScore @match.RedTeamName <br/>
+                                                     Bet 100, Win @((100 * stake.Ratio).ToString("0.00"))
+                                                 </button>
+                                             </div>
+                                         </form>
+                                     }
+                                 }
+                                 else
+                                 {
+                                     <p class="text-danger">Error</p>
                                  }
                              }
                              else
                              {
-                                 <p class="text-danger">Error</p>
+                                 <p>Match finished</p>
                              }
-                         }
-                         else
-                         {
-                             <p>Match finished</p>
-                         }
-                     </td>
-                 </tr>
-             }
+                        }
+                        else
+                        {
+                            <p class="text-danger">Insufficient balance</p>
+                        }
+                        <hr/>
+                    </td>
+                </tr>
+            }
         }
         else
         {

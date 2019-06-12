@@ -108,11 +108,33 @@ services:
             #- bets-internal
         depends_on:
             - bets_sql
-    bets_worker:
+    bets_new_match_worker:
         build:
             context: ./Bets/
-            target: final-worker
-        image: "localhost:5000/leagueofbets_bets_worker"
+            target: final-new-match-worker
+        image: "localhost:5000/leagueofbets_bets_new_match_worker"
+        networks:
+            - global
+            #- bets-internal
+        depends_on:
+            - bets_sql
+            - bets_event_queue
+    bets_match_update_worker:
+        build:
+            context: ./Bets/
+            target: final-match-update-worker
+        image: "localhost:5000/leagueofbets_bets_match_update_worker"
+        networks:
+            - global
+            #- bets-internal
+        depends_on:
+            - bets_sql
+            - bets_event_queue
+    bets_new_bet_worker:
+        build:
+            context: ./Bets/
+            target: final-new-bet-worker
+        image: "localhost:5000/leagueofbets_bets_new_bet_worker"
         networks:
             - global
             #- bets-internal

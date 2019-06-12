@@ -150,11 +150,15 @@ namespace MatchesWorker
 
             dbContext.UpdateRange(matches);
 
+            var matchIds = matches.Select(m => m.Id);
+            var matchEntities = await dbContext.Matches.Where(m => matchIds.Contains(m.Id)).ToDictionaryAsync(m => m.Id, m => m);
+
             foreach (var match in matches)
             {
-                if (match.IsFinished)
+                var matchEntity = matchEntities[match.Id];
+                if (match.BlueScore != matchEntity.BlueScore || match.RedScore != matchEntity.RedScore)
                 {
-                    _matchEventProducer.PublishMatchUpdate(match);
+                    _matchEventProducer.PublishMatchUpdate(match, matchEntity);
                 }
             }
 

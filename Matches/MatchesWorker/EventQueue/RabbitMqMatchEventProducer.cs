@@ -33,23 +33,23 @@ namespace MatchesWorker.EventQueue
             {
                 Persistent = true
             };
-            var body = Serialize(match);
+            var body = SerializeNew(match);
 
             _model.BasicPublish("match_new", "", properties, body);
         }
 
-        public void PublishMatchUpdate(Match match)
+        public void PublishMatchUpdate(Match updatedMatch, Match oldMatch)
         {
             var properties = new BasicProperties
             {
                 Persistent = true
             };
-            var body = Serialize(match);
+            var body = SerializeUpdate(updatedMatch, oldMatch);
 
             _model.BasicPublish("match_update", "", properties, body);
         }
 
-        private static byte[] Serialize(Match match)
+        private static byte[] SerializeNew(Match match)
         {
             var json = JsonConvert.SerializeObject(new
             {
@@ -57,6 +57,19 @@ namespace MatchesWorker.EventQueue
                 match.BestOf,
                 match.BlueScore,
                 match.RedScore
+            });
+            return Encoding.UTF8.GetBytes(json);
+        }
+        private static byte[] SerializeUpdate(Match updatedMatch, Match oldMatch)
+        {
+            var json = JsonConvert.SerializeObject(new
+            {
+                updatedMatch.Id,
+                updatedMatch.BestOf,
+                OldBlueScore = oldMatch.BlueScore,
+                OldRedScore = oldMatch.RedScore,
+                updatedMatch.BlueScore,
+                updatedMatch.RedScore
             });
             return Encoding.UTF8.GetBytes(json);
         }

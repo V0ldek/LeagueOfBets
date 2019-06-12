@@ -1,6 +1,5 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:2.2-stretch-slim AS base
 WORKDIR /app
-EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:2.2-stretch AS build-data
 WORKDIR /src
@@ -24,6 +23,7 @@ RUN dotnet publish "MatchesAPI.csproj" -c Release -o /app
 FROM base AS final-api
 WORKDIR /app
 COPY --from=publish-api /app .
+EXPOSE 80
 ENTRYPOINT ["dotnet", "MatchesAPI.dll"]
 
 FROM build-data AS build-worker

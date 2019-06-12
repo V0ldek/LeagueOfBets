@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BetsAPI.EventQueue;
 using BetsData;
 using BetsData.Entities;
 using Microsoft.AspNetCore.Authorization;
@@ -18,11 +19,13 @@ namespace BetsAPI.Controllers
     public class BetController : ControllerBase
     {
         private readonly BetsDbContext _betsDbContext;
+        private readonly IBetEventProducer _betEventProducer;
         private readonly ILogger<BetController> _logger;
 
-        public BetController(BetsDbContext betsDbContext, ILogger<BetController> logger)
+        public BetController(BetsDbContext betsDbContext, ILogger<BetController> logger, IBetEventProducer betEventProducer)
         {
             _betsDbContext = betsDbContext;
+            _betEventProducer = betEventProducer;
             _logger = logger;
         }
 
@@ -71,8 +74,16 @@ namespace BetsAPI.Controllers
                 return BadRequest($"Match ${stake.MatchId} already finished.");
             }
 
+            var account = await _betsDbContext.Accounts.SingleOrDefaultAsync(a => a.UserId == bet.UserId);
+
+            if (account.Balance < bet.Amount)
+            {
+                return BadRequest($"Insufficient funds.");
+            }
+
             _betsDbContext.Bets.Add(bet);
 
+            _betEventProducer.PublishNewBet(bet);
             await _betsDbContext.SaveChangesAsync();
 
             return Ok();

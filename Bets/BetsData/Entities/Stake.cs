@@ -20,6 +20,8 @@ namespace BetsData.Entities
 
         public DateTime Timestamp { get; set; }
 
+        public bool IsBettable { get; set; }
+
         public ICollection<Bet> Bets { get; set; }
     }
 }

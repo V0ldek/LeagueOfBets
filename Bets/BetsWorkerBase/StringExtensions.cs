@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace MatchesWorker
+namespace BetsWorkerBase
 {
-    internal static class StringExtensions
+    public static class StringExtensions
     {
         public static string AddTimestamp(this string @string) => $"{DateTime.Now}: {@string}";
     }

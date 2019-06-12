@@ -54,6 +54,9 @@ namespace BetsData
                     entity.Property(s => s.Timestamp)
                         .HasDefaultValueSql("SYSDATETIME()");
 
+                    entity.Property(s => s.IsBettable)
+                        .IsRequired();
+
                     entity.HasMany(s => s.Bets)
                         .WithOne(b => b.Stake)
                         .HasForeignKey(b => b.StakeId);

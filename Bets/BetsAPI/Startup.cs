@@ -1,4 +1,5 @@
-﻿using BetsData;
+﻿using BetsAPI.EventQueue;
+using BetsData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -33,6 +34,8 @@ namespace BetsAPI
 
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BetsDbContext>(options => options.UseSqlServer(connectionString));
+
+            services.AddScoped<IBetEventProducer, RabbitMqBetEventProducer>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }
