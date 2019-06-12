@@ -26,18 +26,18 @@ WORKDIR /app
 COPY --from=publish-api /app .
 ENTRYPOINT ["dotnet", "BetsAPI.dll"]
 
-#FROM build-data AS build-worker
-#WORKDIR /src
-#COPY ["BetsWorker/BetsWorker.csproj", "BetsWorker/"]
-#RUN dotnet restore "BetsWorker/BetsWorker.csproj"
-#COPY "BetsWorker/." "BetsWorker/"
-#WORKDIR "/src/BetsWorker"
-#RUN dotnet build "BetsWorker.csproj" -c Release -o /app
+FROM build-data AS build-worker
+WORKDIR /src
+COPY ["BetsWorker/BetsWorker.csproj", "BetsWorker/"]
+RUN dotnet restore "BetsWorker/BetsWorker.csproj"
+COPY "BetsWorker/." "BetsWorker/"
+WORKDIR "/src/BetsWorker"
+RUN dotnet build "BetsWorker.csproj" -c Release -o /app
 
-#FROM build-worker AS publish-worker
-#RUN dotnet publish "BetsWorker.csproj" -c Release -o /app
+FROM build-worker AS publish-worker
+RUN dotnet publish "BetsWorker.csproj" -c Release -o /app
 
-#from base AS final-worker
-#WORKDIR /app
-#COPY --from=publish-worker /app .
-#ENTRYPOINT ["dotnet", "BetsWorker.dll"]
+from base AS final-worker
+WORKDIR /app
+COPY --from=publish-worker /app .
+ENTRYPOINT ["dotnet", "BetsWorker.dll"]

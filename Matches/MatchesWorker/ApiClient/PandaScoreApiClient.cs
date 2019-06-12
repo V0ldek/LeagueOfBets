@@ -51,7 +51,7 @@ namespace MatchesWorker.ApiClient
             var headers = response.Headers.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
             var total = int.Parse(headers["X-Total"].Single());
             var perPage = int.Parse(headers["X-Per-Page"].Single());
-            return (perPage + total - 1) / total;
+            return total == 0 ? 0 : (perPage + total - 1) / total;
         }
 
         private async Task<HttpResponseMessage> GetAsync(string url)
@@ -103,8 +103,7 @@ namespace MatchesWorker.ApiClient
                 RedScore = json.results[0].team_id == redParticipation.TeamId
                     ? json.results[0].score
                     : json.results[1].score,
-                Format = json.number_of_games,
-                IsFinished = json.end_at != null,
+                BestOf = json.number_of_games,
                 Participations = new List<MatchParticipation> {blueParticipation, redParticipation},
                 StartDateTime = json.begin_at
             };

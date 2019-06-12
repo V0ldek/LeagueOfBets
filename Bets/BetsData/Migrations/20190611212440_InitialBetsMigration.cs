@@ -16,9 +16,9 @@ namespace BetsData.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false),
-                    IsFinished = table.Column<bool>(nullable: false, defaultValue: false),
-                    WinningSide = table.Column<string>(nullable: true),
-                    LosersScore = table.Column<int>(nullable: true)
+                    BlueScore = table.Column<int>(nullable: false),
+                    RedScore = table.Column<int>(nullable: false),
+                    BestOf = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -32,8 +32,8 @@ namespace BetsData.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     MatchId = table.Column<int>(nullable: false),
-                    WinningSide = table.Column<string>(nullable: false),
-                    LosersScore = table.Column<long>(nullable: false),
+                    BlueScore = table.Column<int>(nullable: false),
+                    RedScore = table.Column<int>(nullable: false),
                     Ratio = table.Column<float>(nullable: false),
                     Timestamp = table.Column<DateTime>(nullable: false, defaultValueSql: "SYSDATETIME()")
                 },

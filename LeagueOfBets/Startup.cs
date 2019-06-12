@@ -64,6 +64,7 @@ namespace LeagueOfBets
                         options.GetClaimsFromUserInfoEndpoint = true;
 
                         options.Scope.Add("matches");
+                        options.Scope.Add("bets");
                         options.Scope.Add("offline_access");
                         options.ClaimActions.MapJsonKey("website", "website");
                     });
@@ -73,7 +74,10 @@ namespace LeagueOfBets
         {
             services.AddHttpClient(
                 "Matches",
-                configuration => { configuration.BaseAddress = new Uri("http://leagueofbets_matches"); });
+                configuration => { configuration.BaseAddress = new Uri("http://leagueofbets_matches_api"); });
+            services.AddHttpClient(
+                "Bets",
+                configuration => { configuration.BaseAddress = new Uri("http://leagueofbets_bets_api"); });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

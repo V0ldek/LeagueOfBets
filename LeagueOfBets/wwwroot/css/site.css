@@ -54,3 +54,28 @@ body {
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
 }
+
+/* Matches
+
+*/
+
+.match-grid {
+    display: grid;
+    grid-template-columns: 15% auto 15%;
+    grid-template-rows: auto;
+    grid-template-areas: "logo-blue header logo-red"
+}
+
+.match-logo-blue {
+    grid-area: logo-blue
+}
+
+.match-logo-red {
+    grid-area: logo-red
+}
+
+.match-header {
+    grid-area: header;
+    justify-self: center;
+    align-self: center;
+}

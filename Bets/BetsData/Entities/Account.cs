@@ -8,6 +8,6 @@ namespace BetsData.Entities
     {
         public string UserId { get; set; }
 
-        public long Balance { get; set; }
+        public double Balance { get; set; }
     }
 }

@@ -20,9 +20,7 @@ namespace MatchesData
                     entity.Property(m => m.StartDateTime)
                         .IsRequired();
 
-                    entity.Property(m => m.Format)
-                        .HasStringConversion()
-                        .IsRequired();
+                    entity.Ignore(m => m.IsFinished);
 
                     entity.Property(m => m.BlueScore)
                         .HasDefaultValue(0)
@@ -30,10 +28,6 @@ namespace MatchesData
 
                     entity.Property(m => m.RedScore)
                         .HasDefaultValue(0)
-                        .IsRequired();
-
-                    entity.Property(m => m.IsFinished)
-                        .HasDefaultValue(false)
                         .IsRequired();
 
                     entity.HasMany(m => m.Participations)

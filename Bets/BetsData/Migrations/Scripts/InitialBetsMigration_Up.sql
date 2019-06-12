@@ -29,7 +29,7 @@ AS
     SELECT 
         UserId, 
         SUM(CASE 
-            WHEN m.IsFinished = 1 AND s.LosersScore = m.LosersScore AND s.WinningSide = m.WinningSide
+            WHEN s.BlueScore = m.BlueScore AND s.RedScore = m.RedScore
             THEN b.Amount * s.Ratio 
             ELSE -b.Amount
             END) 

@@ -15,7 +15,8 @@ namespace Identity
 
         public static IEnumerable<ApiResource> Apis => new List<ApiResource>
         {
-            new ApiResource("matches", "MatchesAPI")
+            new ApiResource("matches", "MatchesAPI"),
+            new ApiResource("bets", "BetsAPI")
         };
 
         public static IEnumerable<Client> Clients => new List<Client>
@@ -36,7 +37,8 @@ namespace Identity
                 {
                     IdentityServerConstants.StandardScopes.OpenId,
                     IdentityServerConstants.StandardScopes.Profile,
-                    "matches"
+                    "matches",
+                    "bets"
                 },
                 AllowOfflineAccess = true
             }

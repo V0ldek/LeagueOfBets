@@ -79,6 +79,7 @@ services:
             #- matches-internal
         depends_on:
             - matches_sql
+            - bets_event_queue
     matches_sql:
         image: "mcr.microsoft.com/mssql/server:2017-latest"
         ports:
@@ -95,7 +96,7 @@ services:
         build:
             context: ./Bets/
             target: final-api
-        image: "localhost:5000/leagueofbets_matches_api"
+        image: "localhost:5000/leagueofbets_bets_api"
         ports:
             - "48080:80"
         environment:
@@ -107,6 +108,17 @@ services:
             #- bets-internal
         depends_on:
             - bets_sql
+    bets_worker:
+        build:
+            context: ./Bets/
+            target: final-worker
+        image: "localhost:5000/leagueofbets_bets_worker"
+        networks:
+            - global
+            #- bets-internal
+        depends_on:
+            - bets_sql
+            - bets_event_queue
     bets_sql:
         image: "mcr.microsoft.com/mssql/server:2017-latest"
         ports:
@@ -119,6 +131,13 @@ services:
             #- bets-internal
         volumes:
             - bets-sqlvolume:/var/opt/mssql
+    bets_event_queue:
+      image: "rabbitmq:3.6.14-management"
+      ports:
+          - "5672:5672"
+          - "15672:15672"
+      networks:
+          - global
 networks:
     global:
     #identity-1:

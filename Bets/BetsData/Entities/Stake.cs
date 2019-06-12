@@ -12,9 +12,9 @@ namespace BetsData.Entities
 
         public int MatchId { get; set; }
 
-        public Side WinningSide { get; set; }
+        public int BlueScore { get; set; }
 
-        public uint LosersScore { get; set; }
+        public int RedScore { get; set; }
         
         public float Ratio { get; set; }
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BetsData.Migrations
 {
     [DbContext(typeof(BetsDbContext))]
-    [Migration("20190610202351_InitialBetsMigration")]
+    [Migration("20190611212440_InitialBetsMigration")]
     partial class InitialBetsMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,13 +46,11 @@ namespace BetsData.Migrations
                 {
                     b.Property<int>("Id");
 
-                    b.Property<bool>("IsFinished")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
+                    b.Property<int>("BestOf");
 
-                    b.Property<int?>("LosersScore");
+                    b.Property<int>("BlueScore");
 
-                    b.Property<string>("WinningSide");
+                    b.Property<int>("RedScore");
 
                     b.HasKey("Id");
 
@@ -65,18 +63,17 @@ namespace BetsData.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<long>("LosersScore");
+                    b.Property<int>("BlueScore");
 
                     b.Property<int>("MatchId");
 
                     b.Property<float>("Ratio");
 
+                    b.Property<int>("RedScore");
+
                     b.Property<DateTime>("Timestamp")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValueSql("SYSDATETIME()");
-
-                    b.Property<string>("WinningSide")
-                        .IsRequired();
 
                     b.HasKey("Id");
 

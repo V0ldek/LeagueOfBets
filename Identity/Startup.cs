@@ -109,7 +109,6 @@ namespace Identity
             }
 
             app.UseIdentityServer();
-            //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
 

@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MatchesData.Migrations
 {
     [DbContext(typeof(MatchesDbContext))]
-    [Migration("20190609200533_InitialMatchesMigration")]
+    [Migration("20190611212306_InitialMatchesMigration")]
     partial class InitialMatchesMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,16 +25,11 @@ namespace MatchesData.Migrations
                 {
                     b.Property<int>("Id");
 
+                    b.Property<int>("BestOf");
+
                     b.Property<int>("BlueScore")
                         .ValueGeneratedOnAdd()
                         .HasDefaultValue(0);
-
-                    b.Property<string>("Format")
-                        .IsRequired();
-
-                    b.Property<bool>("IsFinished")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(false);
 
                     b.Property<int>("RedScore")
                         .ValueGeneratedOnAdd()

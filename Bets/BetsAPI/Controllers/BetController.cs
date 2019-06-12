@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace BetsAPI.Controllers
 {
@@ -16,10 +18,12 @@ namespace BetsAPI.Controllers
     public class BetController : ControllerBase
     {
         private readonly BetsDbContext _betsDbContext;
+        private readonly ILogger<BetController> _logger;
 
-        public BetController(BetsDbContext betsDbContext)
+        public BetController(BetsDbContext betsDbContext, ILogger<BetController> logger)
         {
             _betsDbContext = betsDbContext;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -37,49 +41,29 @@ namespace BetsAPI.Controllers
             return Ok(await _betsDbContext.Bets.Where(b => b.UserId == userId).ToListAsync());
         }
 
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(Bet), StatusCodes.Status200OK)]
+        [HttpPut]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> GetAsync(int id)
+        public async Task<IActionResult> PutAsync(Bet bet)
         {
-            var bet = await _betsDbContext.Bets.SingleOrDefaultAsync(b => b.Id == id);
-
-            if (bet == null)
-            {
-                return NotFound();
-            }
+            _logger.LogInformation($"Bet:\n{JsonConvert.SerializeObject(bet)}");
 
             var subject = User.GetSubjectClaim();
 
             if (bet.UserId != subject)
             {
-                return Unauthorized();
-            }
-
-            return Ok(bet);
-        }
-
-        [HttpPut]
-        [ProducesResponseType(StatusCodes.Status201Created)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<IActionResult> PutAsync(string userId, int stakeId, uint amount)
-        {
-            var subject = User.GetSubjectClaim();
-
-            if (userId != subject)
-            {
+                _logger.LogError($"Unauthorized claim {subject} for userId = {bet.UserId}.");
                 return Unauthorized();
             }
 
             var stake = await _betsDbContext.Stakes
                 .Include(s => s.Match)
-                .SingleOrDefaultAsync(s => s.Id == stakeId);
+                .SingleOrDefaultAsync(s => s.Id == bet.StakeId);
 
             if (stake == null)
             {
-                return BadRequest($"Specified stake ${stakeId} does not exist.");
+                return BadRequest($"Specified stake ${bet.StakeId} does not exist.");
             }
 
             if (stake.Match.IsFinished)
@@ -87,12 +71,6 @@ namespace BetsAPI.Controllers
                 return BadRequest($"Match ${stake.MatchId} already finished.");
             }
 
-            var bet = new Bet
-            {
-                Amount = amount,
-                Stake = stake,
-                UserId = userId
-            };
             _betsDbContext.Bets.Add(bet);
 
             await _betsDbContext.SaveChangesAsync();

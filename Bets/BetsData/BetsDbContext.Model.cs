@@ -17,16 +17,18 @@ namespace BetsData
                     entity.Property(m => m.Id)
                         .ValueGeneratedNever();
 
-                    entity.Property(m => m.IsFinished)
-                        .HasDefaultValue(false)
+                    entity.Ignore(m => m.IsFinished);
+
+                    entity.Ignore(m => m.WinningSide);
+
+                    entity.Property(m => m.BlueScore)
                         .IsRequired();
 
-                    entity.Property(m => m.WinningSide)
-                        .HasStringConversion()
-                        .IsRequired(false);
+                    entity.Property(m => m.RedScore)
+                        .IsRequired();
 
-                    entity.Property(m => m.LosersScore)
-                        .IsRequired(false);
+                    entity.Property(m => m.BestOf)
+                        .IsRequired();
 
                     entity.HasMany(m => m.Stakes)
                         .WithOne(s => s.Match)
@@ -40,11 +42,10 @@ namespace BetsData
                 {
                     entity.HasKey(s => s.Id);
 
-                    entity.Property(m => m.WinningSide)
-                        .HasStringConversion()
+                    entity.Property(m => m.BlueScore)
                         .IsRequired();
 
-                    entity.Property(s => s.LosersScore)
+                    entity.Property(m => m.RedScore)
                         .IsRequired();
 
                     entity.Property(s => s.Ratio)

@@ -1,8 +1,8 @@
-﻿using System;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using BetsData;
 using BetsData.Entities;
-using BetsData.Entities.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -21,27 +21,20 @@ namespace BetsAPI.Controllers
         {
             _betsDbContext = betsDbContext;
         }
-
+        
         [HttpGet]
-        [ProducesResponseType(typeof(Stake), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAsync(int matchId, string side, int losersScore)
+        [ProducesResponseType(typeof(IEnumerable<Stake>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAsync()
         {
-            if(!Enum.TryParse(side, out Side parsedSide))
+            var stakes = await _betsDbContext.Stakes.ToListAsync();
+            return Ok(stakes.Select(s => new
             {
-                return BadRequest($"Invalid parameter {nameof(side)}={side}.");
-            }
-
-            var stake = await _betsDbContext.Stakes.SingleOrDefaultAsync(
-                s => s.MatchId == matchId && s.WinningSide == parsedSide && s.LosersScore == losersScore);
-
-            if (stake == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(stake);
+                s.Id,
+                s.MatchId,
+                s.BlueScore,
+                s.RedScore,
+                s.Ratio
+            }));
         }
     }
 }
