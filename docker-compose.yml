@@ -160,6 +160,9 @@ services:
           - "15672:15672"
       networks:
           - global
+          
+      volumes:
+          - bets-rabbitmqvolume:/var/lib/rabbitmq
 networks:
     global:
     #identity-1:
@@ -170,3 +173,4 @@ volumes:
     identity-sqlvolume:
     matches-sqlvolume:
     bets-sqlvolume:
+    bets-rabbitmqvolume:

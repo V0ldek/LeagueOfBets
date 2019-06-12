@@ -56,6 +56,7 @@ namespace BetsNewBetWorker
 
         protected override void HandleEvent(Bet bet, ulong deliveryTag)
         {
+            _logger.LogInformation($"New bet for stake {bet.StakeId}");
             lock (_betsBatch)
             {
                 _betsBatch.Add(bet);
@@ -67,6 +68,7 @@ namespace BetsNewBetWorker
         {
             while (!cancellationToken.IsCancellationRequested)
             {
+                _logger.LogInformation($"Sleeping for {_configuration.BatchFrequencyInMilliseconds} ms.".AddTimestamp());
                 await Task.Delay(_configuration.BatchFrequencyInMilliseconds, cancellationToken);
 
                 List<Bet> batch;
@@ -75,15 +77,16 @@ namespace BetsNewBetWorker
                 {
                     batch = _betsBatch;
                     _betsBatch = new List<Bet>();
-                    if (!_betsBatch.Any())
-                    {
-                        continue;
-                    }
-
                     deliveryTag = _lastDeliveryTag;
                 }
 
-                _logger.LogInformation($"Processing batch of {_betsBatch.Count} bets.");
+                if (!batch.Any())
+                {
+                    _logger.LogInformation("No batch to process.".AddTimestamp());
+                    continue;
+                }
+
+                _logger.LogInformation($"Processing batch of {batch.Count} bets.".AddTimestamp());
 
                 var stakeIds = batch.Select(b => b.StakeId);
                 var betsByStakeIds = batch.GroupBy(b => b.StakeId).ToDictionary(g => g.Key, g => g.Count());
@@ -91,16 +94,17 @@ namespace BetsNewBetWorker
                 using (var dbContext = new BetsDbContext(_configuration.ConnectionString))
                 using (var transaction = await dbContext.Database.BeginTransactionAsync(IsolationLevel.RepeatableRead, cancellationToken))
                 {
-                    var matches = await dbContext.Matches.Where(m => m.Stakes.Any(s => stakeIds.Contains(s.Id) && s.IsBettable))
+                    var matches = await dbContext.Matches.Include(m => m.Stakes).Where(m => m.Stakes.Any(s => stakeIds.Contains(s.Id)))
                         .ToListAsync(cancellationToken);
+                    _logger.LogInformation($"Got {matches.Count} matches".AddTimestamp());
 
-                    var newStakes = matches.SelectMany(m => m.Stakes.Select(s => CalculateNewStake(s, m, betsByStakeIds))).ToList();
+                    var newStakes = matches.SelectMany(m => m.Stakes.Where(s => s.IsBettable).Select(s => CalculateNewStake(s, m, betsByStakeIds))).ToList();
 
-                    foreach (var oldStake in matches.SelectMany(m => m.Stakes))
+                    foreach (var oldStake in matches.SelectMany(m => m.Stakes.Where(s => s.IsBettable)))
                     {
                         oldStake.IsBettable = false;
                     }
-
+                    _logger.LogInformation("Calculated stakes.");
                     dbContext.Stakes.AddRange(newStakes);
                     await dbContext.SaveChangesAsync(cancellationToken);
                     transaction.Commit();
@@ -123,7 +127,11 @@ namespace BetsNewBetWorker
 
             if (betsByStakeIds.ContainsKey(stake.Id))
             {
-                newStake.Ratio -= _configuration.BaseDistanceStep * _configuration.BetPenaltyRatio;
+                _logger.LogInformation($"Penalty = {_configuration.BaseStep * _configuration.BetPenaltyRatio * betsByStakeIds[stake.Id]}");
+                _logger.LogInformation($"Base = {_configuration.BaseStep}");
+                _logger.LogInformation($"BetRatio = {_configuration.BetPenaltyRatio}");
+                _logger.LogInformation($"Bets = {betsByStakeIds[stake.Id]}");
+                newStake.Ratio -= _configuration.BaseStep * _configuration.BetPenaltyRatio * betsByStakeIds[stake.Id];
             }
 
             foreach (var otherStake in match.Stakes)
@@ -136,9 +144,13 @@ namespace BetsNewBetWorker
                 var blueDifference = stake.BlueScore - otherStake.BlueScore;
                 var redDifference = stake.RedScore - otherStake.RedScore;
                 var distance = blueDifference * blueDifference + redDifference * redDifference;
-                var increase = _configuration.BaseDistanceStep * distance *
+                var increase = _configuration.BaseStep * distance *
                     _configuration.DistanceRatio * betsByStakeIds[otherStake.Id];
                 newStake.Ratio += increase;
+
+                _logger.LogInformation($"Distance = {distance}");
+                _logger.LogInformation($"DistanceRatio = {_configuration.DistanceRatio}");
+                _logger.LogInformation($"Increase = {increase}");
             }
 
             newStake.Ratio = Math.Clamp(newStake.Ratio, _configuration.MinimalStake, _configuration.MaximalStake);

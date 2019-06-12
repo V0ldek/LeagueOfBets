@@ -12,7 +12,7 @@
 
         public float MaximalStake { get; set; }
 
-        public float BaseDistanceStep { get; set; }
+        public float BaseStep { get; set; }
 
         public float DistanceRatio { get; set; }
 

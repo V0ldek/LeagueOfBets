@@ -35,7 +35,7 @@ namespace BetsAPI
             var connectionString = Configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<BetsDbContext>(options => options.UseSqlServer(connectionString));
 
-            services.AddScoped<IBetEventProducer, RabbitMqBetEventProducer>();
+            services.AddScoped<IBetEventProducer, RabbitMqBetEventProducer>(factory => new RabbitMqBetEventProducer("leagueofbets_bets_event_queue"));
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
         }

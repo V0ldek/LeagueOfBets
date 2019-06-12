@@ -76,7 +76,7 @@ namespace BetsAPI.Controllers
 
             var account = await _betsDbContext.Accounts.SingleOrDefaultAsync(a => a.UserId == bet.UserId);
 
-            if (account.Balance < bet.Amount)
+            if (account != null && account.Balance < bet.Amount)
             {
                 return BadRequest($"Insufficient funds.");
             }
